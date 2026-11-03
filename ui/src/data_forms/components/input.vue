@@ -15,12 +15,20 @@
     :multiple="column.is_array"
     @change="onFile"
   >
-  <VueTrix
-    v-else-if="isRichtext"
-    :model-value="modelValue"
-    v-bind="$attrs"
-    @update:model-value="onRichtextUpdate"
-  />
+  <template v-else-if="isRichtext">
+    <VueTrix
+      ref="trix"
+      :model-value="modelValue"
+      v-bind="$attrs"
+      @update:model-value="onRichtextUpdate"
+    />
+    <ScriptureTagToolbar
+      v-if="column.scripture_tags"
+      :content="modelValue"
+      :form-data="formData"
+      @insert="insertIntoRichtext"
+    />
+  </template>
   <ColorPicker
     v-else-if="isColor"
     :model-value="modelValue || '#ffffff'"
@@ -112,6 +120,7 @@ import Emitter from 'view3/src/mixins/emitter'
 import ResourceSelect from 'data_resources/components/select'
 import QueryValueSelect from 'queries/components/value_select'
 import VueTrix from 'utils/components/vue_trix'
+import ScriptureTagToolbar from './scripture_tag_toolbar'
 import { isActiveStorageDirectUploadsEnabled } from 'utils/scripts/configs'
 import { titleize } from 'utils/scripts/string'
 import ActiveStorageDirectUploader from 'utils/scripts/active_storage_direct_uploader'
@@ -126,6 +135,7 @@ export default {
     ResourceSelect,
     QueryValueSelect,
     VueTrix,
+    ScriptureTagToolbar,
     OptionsInput,
     ColorPicker
   },
@@ -216,6 +226,15 @@ export default {
   },
   methods: {
     titleize,
+    insertIntoRichtext (text) {
+      const editor = this.$refs.trix?.$refs?.trix?.editor
+
+      if (editor) {
+        editor.insertString(text)
+      } else {
+        this.onRichtextUpdate(`${this.modelValue || ''}<div>${text}</div>`)
+      }
+    },
     assignDataValue () {
       if (this.modelValue) {
         if (this.isDateTime) {
