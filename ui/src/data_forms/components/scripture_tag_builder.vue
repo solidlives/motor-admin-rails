@@ -23,32 +23,20 @@
         />
       </FormItem>
       <FormItem label="Version">
-        <VSelect
+        <MSelect
           v-model="version"
-          clearable
+          :options="versionOptions"
           placeholder="Network / language default"
-        >
-          <VOption
-            v-for="option in versions"
-            :key="option.abbreviation"
-            :value="option.abbreviation"
-            :label="versionLabel(option)"
-          />
-        </VSelect>
+        />
       </FormItem>
       <FormItem label="Book">
-        <VSelect
+        <MSelect
           v-model="book"
-          filterable
+          :options="bookOptions"
+          :with-deselect="false"
           placeholder="Select a book"
-        >
-          <VOption
-            v-for="option in books"
-            :key="option.code"
-            :value="option.names[0]"
-            :label="option.names.slice(0, 2).join(' / ')"
-          />
-        </VSelect>
+          filterable
+        />
       </FormItem>
       <div class="scripture-tag-numbers">
         <FormItem label="Chapter">
@@ -126,6 +114,14 @@ export default {
     }
   },
   computed: {
+    // MSelect (the fork's select) takes { value, label } options via :options;
+    // view3's VSelect/VOption pair does not render slot options here.
+    versionOptions () {
+      return this.versions.map((option) => ({ value: option.abbreviation, label: this.versionLabel(option) }))
+    },
+    bookOptions () {
+      return this.books.map((option) => ({ value: option.names[0], label: option.names.slice(0, 2).join(' / ') }))
+    },
     reference () {
       if (!this.book || !this.chapter) return null
 
