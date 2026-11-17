@@ -77,6 +77,22 @@
         :text-truncate="false"
         :type="columnType"
       />
+      <div
+        v-else-if="column.scripture_tags"
+        class="w-100"
+      >
+        <DataCell
+          ref="dataCell"
+          :value="value"
+          :format="column.format"
+          :text-truncate="false"
+          :type="columnType"
+        />
+        <ScriptureTagStatus
+          :resource="resource"
+          :column="column"
+        />
+      </div>
       <DataCell
         v-else
         ref="dataCell"
@@ -141,6 +157,7 @@ import DataCell from 'data_cells/components/data_cell'
 import FormInput from 'data_forms/components/input'
 import Reference from 'data_cells/components/reference'
 import FormListInput from 'data_forms/components/list_input'
+import ScriptureTagStatus from './scripture_tag_status'
 import { modelNameMap } from 'data_resources/scripts/schema'
 import { isJsonColumn, buildColumnValidator } from '../scripts/form_utils'
 import { includeParams, fieldsParams } from '../scripts/query_utils'
@@ -154,7 +171,8 @@ export default {
     DataCell,
     FormInput,
     FormListInput,
-    Reference
+    Reference,
+    ScriptureTagStatus
   },
   props: {
     column: {
