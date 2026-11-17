@@ -76,7 +76,8 @@ module Motor
         fields.each_with_object(fields_hash) do |field, acc|
           field_symbol = field.to_sym
 
-          next if !is_permitted_all && permitted_attributes.exclude?(field_symbol)
+          next if !is_permitted_all && permitted_attributes.exclude?(field_symbol) &&
+                  field_symbol.to_s != model.primary_key.to_s
 
           if model.columns_hash[field]
             acc['only'] << field
